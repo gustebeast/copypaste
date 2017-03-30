@@ -5,9 +5,10 @@ USE CP;
 CREATE TABLE IF NOT EXISTS Users (
 	uid INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	username VARCHAR(32) NOT NULL,
-	password VARCHAR(32) NOT NULL, 
-	savedtext VARCHAR(4096) NOT NULL
+	password VARCHAR(32) NOT NULL
 );
+
+INSERT INTO Users (username, password) VALUES ("gus", "pass");
 
 
 -- CREATE TABLE Customers (

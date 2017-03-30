@@ -16,6 +16,7 @@ function setup_db() {
 }
 
 function connect_to_db($dbname) {
+    global $servername, $username, $password;
     $dbc = @mysqli_connect($servername, $username, $password, $dbname) or
             die( "Connect failed: ". mysqli_connect_error() );
     return $dbc;

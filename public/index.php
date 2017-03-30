@@ -5,13 +5,37 @@ setup_db();
 ?>
 <!DOCTYPE html>
 <?php
-# Handle new paste form
-if (isset($_POST["paste"])) {
-  echo $_POST["paste"];
+$_SESSION['username'] = "gus"; # This should be the actual username eventually
+
+$paste = "";
+$textareaclass = ""; # Used to make the text area green when text is pasted
+$dbc = connect_to_db("CP");
+$username = $_SESSION['username'];
+if (!$username) {
+    echo "Please log in!";
+} else if (isset($_POST["paste"])) {
+    # If the user made a new paste, use that
+    $paste = $_POST["paste"];
+    $textareaclass = "submitted";
+    $path = sprintf("../application/pastes/%s.txt", $username);
+    file_put_contents($path, $paste);
+} else {
+    # Otherwise look for an existing paste
+    $path = sprintf("../application/pastes/%s.txt", $username);
+    if (file_exists($path)) {
+        $paste = file_get_contents($path);
+    }
 }
+
 ?>
 <html lang="en">
-<head><title>CopyPaste</title></head>
+<head>
+<!-- Load css and javascript -->
+<link href="../application/index.css" rel="stylesheet" type="text/css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="../application/index.js"></script>
+<title>CopyPaste</title>
+</head>
 <body>
 <!-- Add code here to put a username/password box in the
      top right of the page. Next to the boxes we can have
@@ -22,12 +46,24 @@ if (isset($_POST["paste"])) {
      when they click register, and then make them click register
      again once they reenter their password. Feel free to do
      whatever you think makes the most sense.
-     We also have to make sure the username and password are less
-     than 32 characters (to fit in the database) -->
-<h2>CopyPaste</h2>
-<form method='post' id='pasteform'>
-<input type='submit' value='New paste' />
-</form>
-<textarea name="paste" form="pasteform">Paste here...</textarea>
+     We also have to do some checks on the username/password.
+     They need to both be less than 33 characters, the username
+     needs to not already be used and only contain alphanumeric
+     characters. -->
+<div id="form">
+    <h2>CopyPaste</h2>
+    <form method='post' id='pasteform'>
+    <?php
+        printf(
+            "<textarea maxlength='10000' name='paste' form='pasteform' class='%s'>%s</textarea>",
+            $textareaclass,
+            $paste
+        );
+    ?>
+    <br>
+    <input id='newpaste' type='submit' value='New paste' />
+    <input id='autosubmit' type='checkbox' checked>Autosubmit</input>
+    </form>
+</div>
 </body>
 </html>
