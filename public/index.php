@@ -63,6 +63,9 @@ if (!$username) {
     <br>
     <input id='newpaste' type='submit' value='New paste' />
     <input id='autosubmit' type='checkbox' checked>Autosubmit</input>
+    <br>
+    <br>
+    <div class='paste-box'></div>
     </form>
 </div>
 </body>

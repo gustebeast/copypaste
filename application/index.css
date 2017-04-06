@@ -12,3 +12,10 @@ textarea {
     border: 1px solid lightgreen;
     box-shadow: 0 0 8px lightgreen, inset 0 0 8px lightgreen;
 }
+
+.paste-box {
+    border: 1px solid black;
+    display: inline-block;
+    height: 200px;
+    width: 200px;
+}
