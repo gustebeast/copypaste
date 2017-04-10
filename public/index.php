@@ -50,6 +50,11 @@ if (!$username) {
      They need to both be less than 33 characters, the username
      needs to not already be used and only contain alphanumeric
      characters. -->
+<div id="login">
+	<input id='username' type='text' name='name' value="<?php echo $username;?>"> Username: </input>
+	<input id='password' type='text' name='name' value="<?php echo $password;?>"> Password: </input>
+</div>
+
 <div id="form">
     <h2>CopyPaste</h2>
     <form method='post' id='pasteform'>
