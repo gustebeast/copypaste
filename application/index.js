@@ -5,6 +5,13 @@ $(document).ready(function() {
   document.addEventListener('paste', function(e) { paste(e); }, false);
 });
 
+
+
+function login() {
+  //check login info in database
+}
+
+
 function pasteBoxInput() {
   if ($("#autosubmit:checked").length == 1) {
     $("#newpaste").click();
