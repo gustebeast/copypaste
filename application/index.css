@@ -1,21 +1,8 @@
-textarea {
-    width: 300px;
-    height: 200px;
-}
-
-#form {
+body {
     text-align: center;
 }
 
-.submitted:focus {
-    outline: none !important;
-    border: 1px solid lightgreen;
-    box-shadow: 0 0 8px lightgreen, inset 0 0 8px lightgreen;
-}
-
-.paste-box {
+#paste-box {
     border: 1px solid black;
     display: inline-block;
-    height: 200px;
-    width: 200px;
 }
