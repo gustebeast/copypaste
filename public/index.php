@@ -47,16 +47,15 @@ if (!$user) {
      characters. -->
 <header id="login" style='text-align:center; border: solid #99838f; width:400px; padding-bottom: 40px;'>
     <h2> Login </h2>
-    Username: <input id='username' type='text' name='username' value="<?php echo $user;?>"/> 
+    Username: <input id='username' type='text' name='username'/> 
     <br/>
-    Password: <input id='password' type='text' name='password' value="<?php echo $password;?>"/>
+    Password: <input id='password' type='text' name='password'/>
     <br/>
-    <input id='login' type='submit' value='login' onclick="login()"/>
-
     <?php
-    //$username = $_POST["username"];
-    //$password = $_POST["password"];
+    $username = $_POST["username"];
+    $password = $_POST["password"];
     ?>
+    <input id='login' type='submit' value='login' onclick="login($username,$password,$Users)"/>
 </header>
 <body>
 <h2>CopyPaste</h2>
