@@ -6,7 +6,16 @@ setup_db();
 ?>
 <!DOCTYPE html>
 <?php
-$_SESSION['username'] = "gus"; # This should be the actual username eventually
+//$_SESSION['username'] = "gus"; # This should be the actual username eventually
+
+//check if someone has logged in
+//if so, set username and pw and check login info
+if ($_POST["login"]){
+    $_SESSION['username'] = $_POST["username"];
+    $pw = $_POST["password"];
+    //$_SESSION['username']->checklogin()
+}
+
 
 $dbc = connect_to_db("CP");
 $user = $_SESSION['username'];
@@ -46,16 +55,14 @@ if (!$user) {
      needs to not already be used and only contain alphanumeric
      characters. -->
 <header id="login" style='text-align:center; border: solid #99838f; width:400px; padding-bottom: 40px;'>
+    <form method='post'>
     <h2> Login </h2>
     Username: <input id='username' type='text' name='username'/> 
     <br/>
     Password: <input id='password' type='text' name='password'/>
     <br/>
-    <?php
-    $username = $_POST["username"];
-    $password = $_POST["password"];
-    ?>
-    <input id='login' type='submit' value='login' onclick="login($username,$password,$Users)"/>
+    <input id='login' type='submit' name='login' value='login' onclick="login($username,$password,$Users)"/>
+    </form>
 </header>
 <body>
 <h2>CopyPaste</h2>
