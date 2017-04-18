@@ -3,6 +3,7 @@ require "../application/dbconn.php";
 require "../application/controller.php";
 session_start();
 setup_db();
+//header("Cache-Control: max-age=0, must-revalidate, no-store");
 ?>
 <!DOCTYPE html>
 <?php
@@ -11,14 +12,14 @@ $_SESSION['username'] = "gus"; # This should be the actual username eventually
 $dbc = connect_to_db("CP");
 $user = $_SESSION['username'];
 $userText = "";
-$userImageSrc = "";
+$userImagePath = "";
 # If a user is logged in, check to see if there is a saved paste on the server
 if (!$user) {
     echo "Please log in!";
 } else {
     $userText = getPastedText($user);
     if (!$userText) {
-        $userImageSrc = getImageURL($user);
+        $userImagePath = getImagePath($user);
     }
 }
 
@@ -60,8 +61,13 @@ if (!$user) {
 <body>
 <h2>CopyPaste</h2>
 <div id="paste-box">
-    <img id="pasted-image" src="<?php echo $userImageSrc ?>">
-    <?php echo $userText ?>
+    <?php
+        if ($userText) {
+            echo getPasteBoxHTML("text", $userText);
+        } elseif ($userImagePath) {
+            echo getPasteBoxHTML("image", $userImagePath);
+        }
+    ?>
 </div>
 </body>
 </html>

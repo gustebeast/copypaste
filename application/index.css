@@ -2,7 +2,19 @@ body {
     text-align: center;
 }
 
+textarea {
+  resize: none;
+  height: 100%;
+  width: 100%;
+}
+
+img {
+  height: auto;
+  width: 100%;
+}
+
 #paste-box {
-    border: 1px solid black;
     display: inline-block;
+    height: 200px;
+    width: 300px;
 }
