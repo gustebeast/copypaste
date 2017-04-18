@@ -70,4 +70,14 @@
       echo getImagePath($_POST['user']);
       break;
   }
+
+
+  function checklogin($user, $pw) {
+    $sqlUsers = "SELECT * FROM Users";
+    if ($sqlUsers[$user]){
+      if ($sqlUsers[$user]==$pw) {
+        $_SESSION['loggedin'] = True;
+      }
+    }
+  }
 ?>

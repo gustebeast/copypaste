@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS Users (
 );
 
 INSERT INTO Users (username, password) VALUES ("gus", "pass");
+INSERT INTO Users (username, password) VALUES ("becca", "pw");
+
 
 
 -- CREATE TABLE Customers (
