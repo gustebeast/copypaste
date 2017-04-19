@@ -20,12 +20,14 @@ setup_db();
 <?php
 //check if someone has logged in
 //if so, set username and pw and check login info
+$_SESSION['loggedin'] = False;
 if ($_POST["login"]){
     $_SESSION['username'] = $_POST["username"];
     $pw = $_POST["password"];
-    //$_SESSION['username']->checklogin()
+    $_SESSION['username']->checklogin($_SESSION['username'],$pw);
 }
 
+$loggedin = $_SESSION['loggedin'];
 
 $dbc = connect_to_db();
 $user = $_SESSION['username'];
@@ -59,14 +61,26 @@ if (!$user) {
      needs to not already be used and only contain alphanumeric
      characters. -->
 <header id="login" style='text-align:center; border: solid #99838f; width:400px; padding-bottom: 40px;'>
+
     <form method='post'>
-    <h2> Login </h2>
-    Username: <input id='username' type='text' name='username'/> 
-    <br/>
-    Password: <input id='password' type='text' name='password'/>
-    <br/>
-    <input id='login' type='submit' name='login' value='login' onclick="login($username,$password,$Users)"/>
+        <h2> Login </h2>
+        Username: <input id='username' type='text' name='username'/> 
+        <br/>
+        Password: <input id='password' type='text' name='password'/>
+        <br/>
+        <input id='login' type='submit' name='login' value='login'/>
     </form>
+
+    <!-- <script>
+    if ($loggedin == False){
+        text = "<form method='post'> <h2> Login </h2> Username: <input id='username' type='text' name='username'/> <br/> Password: <input id='password' type='text' name='password'/> <br/> <input id='login' type='submit' name='login' value='login'/> </form>";
+    }
+    else {
+        text = "<h2> $user is logged in </h2>";
+    }
+    </script>
+    text;
+    -->
 </header>
 <body ondrop="drop(event, '<?php echo $user ?>')" ondragover="allowDrop(event)">
 <h2>CopyPaste</h2>
