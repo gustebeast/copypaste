@@ -1,4 +1,6 @@
 <?php
+  require "../application/dbconn.php";
+
   function imagePaste($user, $image) {
     if ($image['size'] == 0) {
       return false;
@@ -56,6 +58,18 @@
     } else {
       return "An error occurred!";
     }
+  }
+
+  function registerUser($user, $pass) {
+    // 60 char hash plus 68 random characters = 128 char ID
+    $uid = password_hash($user, PASSWORD_BCRYPT) . bin2hex(random_bytes(34));
+    $uid = mysql_real_escape_string($uid);
+    $pass = password_hash($pass, PASSWORD_BCRYPT);
+    $pass = mysql_real_escape_string($pass);
+    $dbc = connect_to_db();
+    $query = "INSERT INTO Users (uid, username, password)
+      VALUES ('$uid', '$user', '$pass')";
+    perform_query($dbc, $query);
   }
 
   if (!isset($_POST['action'])) return;

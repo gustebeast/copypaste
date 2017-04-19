@@ -1,4 +1,5 @@
 <?php
+$dbname = "CP";
 $servername = "localhost";
 $username = "root";
 $password = "root";
@@ -15,8 +16,8 @@ function setup_db() {
     $dbc->close();
 }
 
-function connect_to_db($dbname) {
-    global $servername, $username, $password;
+function connect_to_db() {
+    global $dbname, $servername, $username, $password;
     $dbc = @mysqli_connect($servername, $username, $password, $dbname) or
             die( "Connect failed: ". mysqli_connect_error() );
     return $dbc;

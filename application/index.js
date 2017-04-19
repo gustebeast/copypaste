@@ -1,17 +1,32 @@
-// Run on page load
-$(document).ready(function() {
-  document.addEventListener(
+function bindPaste(user) {
+  $(document).bind(
     'paste',
-    function(e) { paste(e, "gus"); },
-    false
+    function(e) { paste(e.originalEvent, user); }
   );
-});
+}
 
+function drop(e, user) {
+    e.preventDefault();
+    var files = e.dataTransfer.files;
+    if (!files) return;
+    let image = null;
+    for (var i = 0; i < files.length; i++) {
+      if (files[i].type.indexOf("image") !== -1) {
+        image = files[i];
+        break;
+      }
+    }
+    if (image) {
+      processImage(user, image);
+    }
+}
 
+function allowDrop(e) {
+    e.preventDefault();
+}
 
 function login() {
   //check login info in database
-  //https://www.w3schools.com/html/html5_draganddrop.asp
 
 }
 
@@ -26,9 +41,26 @@ function pasteResponse(html) {
   $("#paste-box").html(html);
 }
 
+function processImage(user, image) {
+  var formData = new FormData();
+  formData.append('image', image);
+  formData.append('user', user);
+  formData.append('action', 'imagePaste');
+  $.ajax({
+    url: '../application/controller.php', 
+    type: "POST", 
+    cache: false,
+    contentType: false,
+    processData: false,
+    data: formData
+  }).done(pasteResponse);
+}
+
 function paste(e, user) {
+  //$("#login").hide();
   if (e.clipboardData) {
     var items = e.clipboardData.items;
+    
     if (!items) return;
     let item = null;
     // Look through the paste information and try to find an image
@@ -41,19 +73,7 @@ function paste(e, user) {
 
     // If an image was found, process it as such. Otherwise it must be text
     if (item) {
-      var blob = item.getAsFile();
-      var formData = new FormData();
-      formData.append('image', blob);
-      formData.append('user', user);
-      formData.append('action', 'imagePaste');
-      $.ajax({
-        url: '../application/controller.php', 
-        type: "POST", 
-        cache: false,
-        contentType: false,
-        processData: false,
-        data: formData
-      }).done(pasteResponse);
+      processImage(user, item.getAsFile());
     } else {
       var formData = new FormData();
       formData.append('text', e.clipboardData.getData('text'));

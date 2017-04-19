@@ -6,9 +6,18 @@ setup_db();
 //header("Cache-Control: max-age=0, must-revalidate, no-store");
 ?>
 <!DOCTYPE html>
-<?php
-//$_SESSION['username'] = "gus"; # This should be the actual username eventually
+<html lang="en">
+<head>
+<!-- Load css and javascript -->
+<link href="../application/index.css" rel="stylesheet" type="text/css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js">
+</script>
+<script src="../application/index.js"></script>
+<title>CopyPaste</title>
+</head>
 
+<!-- Log in logic -->
+<?php
 //check if someone has logged in
 //if so, set username and pw and check login info
 if ($_POST["login"]){
@@ -18,7 +27,7 @@ if ($_POST["login"]){
 }
 
 
-$dbc = connect_to_db("CP");
+$dbc = connect_to_db();
 $user = $_SESSION['username'];
 $userText = "";
 $userImagePath = "";
@@ -30,18 +39,12 @@ if (!$user) {
     if (!$userText) {
         $userImagePath = getImagePath($user);
     }
+    // Bind the paste event
+    echo "<script type='text/javascript'>bindPaste('$user');</script>";
 }
 
 ?>
-<html lang="en">
-<head>
-<!-- Load css and javascript -->
-<link href="../application/index.css" rel="stylesheet" type="text/css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js">
-</script>
-<script src="../application/index.js"></script>
-<title>CopyPaste</title>
-</head>
+
 <!-- Add code here to put a username/password box in the
      top right of the page. Next to the boxes we can have
      a log in and a register button. If they click the log
@@ -65,7 +68,7 @@ if (!$user) {
     <input id='login' type='submit' name='login' value='login' onclick="login($username,$password,$Users)"/>
     </form>
 </header>
-<body>
+<body ondrop="drop(event, '<?php echo $user ?>')" ondragover="allowDrop(event)">
 <h2>CopyPaste</h2>
 <div id="paste-box">
     <?php
@@ -76,5 +79,7 @@ if (!$user) {
         }
     ?>
 </div>
+<br>
+<input type="text" onpaste="paste(event, '<?php echo $user ?>')" value="Or paste something in here">
 </body>
 </html>
