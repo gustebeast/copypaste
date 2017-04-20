@@ -1,11 +1,11 @@
-function bindPaste(user) {
+function bindPaste(uid) {
   $(document).bind(
     'paste',
-    function(e) { paste(e.originalEvent, user); }
+    function(e) { paste(e.originalEvent, uid); }
   );
 }
 
-function drop(e, user) {
+function drop(e, uid) {
     e.preventDefault();
     var files = e.dataTransfer.files;
     if (!files) return;
@@ -17,7 +17,8 @@ function drop(e, user) {
       }
     }
     if (image) {
-      processImage(user, image);
+      var formData = getFormData(uid, "image", image);
+      makeRequest(formData);
     }
 }
 
@@ -41,53 +42,49 @@ function pasteResponse(html) {
   $("#paste-box").html(html);
 }
 
-function processImage(user, image) {
+/* Takes a uid, type (either "image" or "text"), and
+ * data which can be either text or an image file and
+ * returns formData for an ajax request
+ */
+function getFormData(uid, type, data) {
   var formData = new FormData();
-  formData.append('image', image);
-  formData.append('user', user);
-  formData.append('action', 'imagePaste');
-  $.ajax({
-    url: '../application/controller.php', 
-    type: "POST", 
-    cache: false,
-    contentType: false,
-    processData: false,
-    data: formData
-  }).done(pasteResponse);
+  formData.append(type, data);
+  formData.append('uid', uid);
+  formData.append('action', type + 'Paste');
+  return formData;
 }
 
-function paste(e, user) {
-  //$("#login").hide();
+function paste(e, uid) {
   if (e.clipboardData) {
     var items = e.clipboardData.items;
-    
     if (!items) return;
-    let item = null;
     // Look through the paste information and try to find an image
+    var imageItem = null;
     for (var i = 0; i < items.length; i++) {
       if (items[i].type.indexOf("image") !== -1) {
-        item = items[i];
+        imageItem = items[i];
         break;
       }
     }
-
-    // If an image was found, process it as such. Otherwise it must be text
-    if (item) {
-      processImage(user, item.getAsFile());
+    // Generate the form data for either the image or text paste
+    if (imageItem) {
+      var formData = getFormData(uid, "image", imageItem.getAsFile());
     } else {
-      var formData = new FormData();
-      formData.append('text', e.clipboardData.getData('text'));
-      formData.append('user', user);
-      formData.append('action', 'textPaste');
-      $.ajax({
-        url: '../application/controller.php', 
-        type: "POST", 
-        cache: false,
-        contentType: false,
-        processData: false,
-        data: formData
-      }).done(pasteResponse);
+      var formData = getFormData(uid, "text", e.clipboardData.getData('text'));
     }
+    // Finally make the ajax call to confirm the paste server side
+    makeRequest(formData);
     e.preventDefault();
   }
+}
+
+function makeRequest(formData) {
+  $.ajax({
+      url: '../application/controller.php', 
+      type: "POST", 
+      cache: false,
+      contentType: false,
+      processData: false,
+      data: formData
+    }).done(pasteResponse); // Get back HTML from the server
 }

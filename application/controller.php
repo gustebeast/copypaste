@@ -1,97 +1,162 @@
 <?php
-  require "../application/dbconn.php";
+  define("PASTE_PATH", "../application/pastes/");
+  require_once "../application/dbconn.php";
 
-  function imagePaste($user, $image) {
-    if ($image['size'] == 0) {
-      return false;
+  // // // // // // // // // // // // //
+  // Public helper functions          //
+  // // // // // // // // // // // // //
+  function getPasteAsHTML($uid) {
+    $path = PASTE_PATH . getPasteFilename($uid);
+    if (!file_exists($path)) {
+      return errorHTML("An error occurred!");
+    } elseif (endsWith($path, ".txt")) {
+      return getTextPasteHTML(file_get_contents($path));
+    } else {
+      return getImagePasteHTML($path);
     }
-    deleteFileIfExists(getTextPath($user));
-    $filename = sprintf(
-      "../application/pastes/%s_%s",
-      $user,
-      str_replace("/", ".", $image['type'])
-    );
-    // Move the uploaded file to the proper location
-    move_uploaded_file($image["tmp_name"], $filename);
-    // Add a timestamp to the path to force the browser to refresh the image
-    return getPasteBoxHTML("image", $filename . "?" . time());
   }
 
-  function textPaste($user, $text) {
-    deleteFileIfExists(getImagePath($user));
-    file_put_contents(getTextPath($user), $text);
-    return getPasteBoxHTML("text", $text);
+  // // // // // // // // // // // // //
+  // Private helper functions         //
+  // // // // // // // // // // // // //
+  function endsWith($string, $test) {
+    $strlen = strlen($string);
+    $testlen = strlen($test);
+    if ($testlen > $strlen) return false;
+    return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
   }
 
-  function getImagePath($user) {
-    $matches = glob("../application/pastes/" . $user . "_image*");
-    if (count($matches) == 1) {
-      return $matches[0];
+  function encrypt($string) {
+    return hash("sha256", $string);
+  }
+
+  function genUID($user, $pass) {
+    return encrypt($user . $pass);
+  }
+
+  function getPasteFilename($uid) {
+    $dbc = connect_to_db();
+    $cleanencrypteduid = $dbc->real_escape_string(encrypt($uid));
+    $query = "SELECT filename
+              FROM Users
+              WHERE encrypteduid='$cleanencrypteduid'";
+    $result = perform_query($dbc, $query);
+    if (mysqli_num_rows($result) != 0) {
+      return mysqli_fetch_array($result)['filename'];
     }
-    return "";
+    return null;
   }
 
-  function getTextPath($user) {
-    return sprintf("../application/pastes/%s.txt", $user);
+  function getTextPasteHTML($text) {
+    return "<textarea readonly>$text</textarea>";
   }
 
-  function getPastedText($user) {
-    $path = sprintf("../application/pastes/%s.txt", $user);
-    if (file_exists($path)) {
-        return file_get_contents($path);
-    }
-    return "";
+  function getImagePasteHTML($path) {
+    return "<img id='pasted-image' src='$path'>";
   }
 
-  function deleteFileIfExists($path) {
+  function deleteFileIfExists($filename) {
+    $path = PASTE_PATH . $filename;
     if (file_exists($path)) {
       unlink($path);
     }
   }
 
-  function getPasteBoxHTML($type, $data) {
+  function errorHTML($text) {
+    return "<div class='error'>$text</div>";
+  }
+
+  // // // // // // // // // // // // //
+  // Functions called via javascript  //
+  // // // // // // // // // // // // //
+  function paste($uid, $type, $data) {
+    deleteFileIfExists(getPasteFilename($uid));
+    if ($type == "image" && $data['size'] == 0) {
+      return errorHTML("The image you pasted was rejected by the server");
+    }
+    // Get the proper extension so we can save the paste as a file
     if ($type == "text") {
-      return "<textarea readonly>$data</textarea>";
-    } elseif ($type = "image") {
-      // Add a time stamp to the image url to force reload
-      return "<img id='pasted-image' src='$data'>";
+      $extension = ".txt";
     } else {
-      return "An error occurred!";
+      // This converts type identifiers like 'image/jpg' to '.jpg'
+      $extension = '.'.substr($data['type'], strpos($data['type'], "/") + 1);
+    }
+    // Generate a new "random" filename
+    $newFilename = uniqid() . $extension;
+    $path = PASTE_PATH . $newFilename;
+    // If the uniqid we generated wasn't unique (very rare), return an error
+    if (file_exists($path)) {
+      return errorHTML("An error occurred, please try again");
+    }
+    // If text, write directly to file, otherwise move the uploaded image
+    if ($type == "text") {
+      file_put_contents($path, $data);
+    } else {
+      move_uploaded_file($data["tmp_name"], $path);
+    }
+    // Update the database with the new filename
+    $dbc = connect_to_db();
+    $cleanencrypteduid = $dbc->real_escape_string(encrypt($uid));
+    $query = "UPDATE Users
+              SET filename='$newFilename'
+              WHERE encrypteduid='$cleanencrypteduid'";
+    perform_query($dbc, $query);
+    // Return the new html to display clientside
+    if ($type == "text") {
+      return getTextPasteHTML($data);
+    } else {
+      return getImagePasteHTML($path);
     }
   }
 
-  function registerUser($user, $pass) {
-    // 60 char hash plus 68 random characters = 128 char ID
-    $uid = password_hash($user, PASSWORD_BCRYPT) . bin2hex(random_bytes(34));
-    $uid = mysql_real_escape_string($uid);
-    $pass = password_hash($pass, PASSWORD_BCRYPT);
-    $pass = mysql_real_escape_string($pass);
-    $dbc = connect_to_db();
-    $query = "INSERT INTO Users (uid, username, password)
-      VALUES ('$uid', '$user', '$pass')";
-    perform_query($dbc, $query);
-  }
-
+  // This code runs when an ajax request is made
   if (!isset($_POST['action'])) return;
   switch($_POST['action']) {
-    case 'imagePaste':
-      echo imagePaste($_POST['user'], $_FILES['image']);
-      break;
     case 'textPaste':
-      echo textPaste($_POST['user'], $_POST['text']);
+      echo paste($_POST['uid'], "text", $_POST['text']);
       break;
-    case 'getImagePath':
-      echo getImagePath($_POST['user']);
+    case 'imagePaste':
+      echo paste($_POST['uid'], "image", $_FILES['image']);
       break;
   }
 
+  // // // // // // // // // // // // //
+  // Functions for login/registration //
+  // // // // // // // // // // // // //
+  function registerUser($user, $pass) {
+    // Create the new UID
+    $uid = genUID($user, $pass);
+    // Encrypt the UID again for storage in the database
+    $encrypteduid = encrypt($uid);
+    // And clean to prevent SQL injection
+    $dbc = connect_to_db();
+    $cleanencrypteduid = $dbc->real_escape_string($encrypteduid);
+    $cleanuser = $dbc->real_escape_string($user);
+    // We use a more secure algorithm for password hashing
+    $encryptedpass = password_hash($pass, PASSWORD_BCRYPT);
+    $cleanencryptedpass = $dbc->real_escape_string($encryptedpass);
+    $query = "INSERT INTO Users (encrypteduid, username, encryptedpassword)
+      VALUES ('$cleanencrypteduid', '$cleanuser', '$cleanencryptedpass')";
+    perform_query($dbc, $query);
+    return $uid; // Return the actual UID, not the encrypted one
+  }
 
-  function checklogin($user, $pw) {
-    $sqlUsers = "SELECT * FROM Users";
-    if ($sqlUsers[$user]){
-      if ($sqlUsers[$user]==$pw) {
-        $_SESSION['loggedin'] = True;
+  /* Takes in a username and an unencrypted password and checks to see if it
+   * matches an entry in the database. If so, it returns the user's UID,
+   * otherwise it returns false.
+   */
+  function checklogin($user, $pass) {
+    $dbc = connect_to_db();
+    $cleanuser = $dbc->real_escape_string($user); // clean for sql query
+    $query = "SELECT encryptedpassword FROM Users WHERE username='$cleanuser'";
+    $result = perform_query($dbc, $query);
+    if (mysqli_num_rows($result) != 0) {
+      $correctpass = mysqli_fetch_array($result)['encryptedpassword'];
+      if (password_verify($pass, $correctpass)) {
+        // Return the UID
+        return genUID($user, $pass);
       }
     }
+    return false;
   }
 ?>
