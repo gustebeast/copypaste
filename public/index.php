@@ -22,14 +22,32 @@ setup_db();
 //if so, set username and pw and check login info
 $uid = "";
 
+if (isset($_POST["logout"])) {
+    $uid=false;
+    unset($_SESSION['uid']);
+}
+
 if (isset($_POST["register"])) {
     $username = $_POST["username"];
     $password = $_POST["password"];
     // TODO: Need checks here to validate the username and password
     // We have to make sure the username/password are less than 33 characters
     // and the username is not already used 
-
-    registerUser($username, $password);
+    if (strlen($username)>33){
+        echo "username must be less than 33 characters!";
+    }
+    elseif (strlen($password)>33){
+        echo "password must be less than 33 characters!";
+    }
+    else{
+        if(checkregister($username)){
+            registerUser($username, $password);
+            echo "<h2 style='color:#a83e7a'> " . $username . " has registered. </h2>";
+        }
+        else{
+            echo "<h2 style='color:#a83e7a'> " . $username . " is taken. Please choose another username </h2>";
+        }
+    }
 } elseif (isset($_POST["login"])) {
     $uid = checklogin($_POST["username"], $_POST["password"]);
     if ($uid) {
@@ -63,7 +81,10 @@ if ($uid) {
      when they click register, and then make them click register
      again once they reenter their password. Feel free to do
      whatever you think makes the most sense. -->
-<header id="login" style='text-align:center; border: solid #99838f; width:400px; padding-bottom: 40px;'>
+
+<?php
+if (!$uid) {
+    echo "<header id='login' style='text-align:center; border: solid #99838f; width:400px; padding-bottom: 40px;'>
 
     <form method='post'>
         <h2> Login </h2>
@@ -74,27 +95,25 @@ if ($uid) {
         <input id='login' type='submit' name='login' value='login'/>
     </form>
 
-    <!-- <script>
-    if ($loggedin == False){
-        text = "<form method='post'> <h2> Login </h2> Username: <input id='username' type='text' name='username'/> <br/> Password: <input id='password' type='text' name='password'/> <br/> <input id='login' type='submit' name='login' value='login'/> </form>";
-    }
-    else {
-        text = "<h2> $user is logged in </h2>";
-    }
-    </script>
-    text;
-    -->
-</header>
-<header id="register" style='text-align:center; border: solid #99838f; width:400px; padding-bottom: 40px;'>
-    <form method='post'>
-        <h2> Register </h2>
-        Username: <input id='username' type='text' name='username'/> 
-        <br/>
-        Password: <input id='password' type='text' name='password'/>
-        <br/>
-        <input id='register' type='submit' name='register' value='register'/>
-    </form>
-</header>
+    </header>
+    <header id='register' style='text-align:center; border: solid #99838f; width:400px; padding-bottom: 40px;'>
+        <form method='post'>
+            <h2> Register </h2>
+            Username: <input id='username' type='text' name='username'/> 
+            <br/>
+            Password: <input id='password' type='text' name='password'/>
+            <br/>
+            <input id='register' type='submit' name='register' value='register'/>
+        </form>
+    </header>";
+}
+else{
+    echo "<form method='post'>
+    <input id='logout' type='submit' name='logout' value='logout' />
+    </form>";
+}
+?>
+
 
 <body ondrop="drop(event, '<?php echo $uid ?>')" ondragover="allowDrop(event)">
 <h2>CopyPaste</h2>

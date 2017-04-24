@@ -159,4 +159,16 @@
     }
     return false;
   }
+
+
+  function checkregister($user) {
+    $dbc = connect_to_db();
+    $cleanuser = $dbc->real_escape_string($user); // clean for sql query
+    $query = "SELECT encryptedpassword FROM Users WHERE username='$cleanuser'";
+    $result = perform_query($dbc, $query);
+    if (mysqli_num_rows($result) != 0) {
+      return true;
+    }
+    return false;
+  }
 ?>
