@@ -21,6 +21,7 @@ setup_db();
 //check if someone has logged in
 //if so, set username and pw and check login info
 $uid = "";
+
 if (isset($_POST["register"])) {
     $username = $_POST["username"];
     $password = $_POST["password"];
@@ -34,6 +35,7 @@ if (isset($_POST["register"])) {
     if ($uid) {
         // Log in successful
         $_SESSION['uid'] = $uid;
+        $_SESSION["username"] = $_POST["username"];
     } else {
         // Log in failed
     }
@@ -45,8 +47,9 @@ if (!$uid && isset($_SESSION['uid'])) {
 // Bind the paste event if the user is logged in
 if ($uid) {
     echo "<script type='text/javascript'>bindPaste('$uid');</script>";
+    echo "<h2 style='color:#a83e7a'> " . $_SESSION["username"] . " is logged in! </h2>";
 } else {
-    echo "Please log in!";
+    echo "<h2 style='color:#a83e7a'> Please log in! </h2>";
 }
 
 ?>
