@@ -1,5 +1,5 @@
 body {
-    text-align: center;
+  text-align: center;
 }
 
 textarea {
@@ -13,8 +13,25 @@ img {
   width: 100%;
 }
 
+.box-title {
+  color: blue;
+  cursor: pointer;
+  display: inline-block;
+  text-decoration: underline;
+}
+
+.selected-box {
+  color: gray;
+  cursor: default;
+  text-decoration: none;
+}
+
+.login-register-box {
+  display: inline-block;
+}
+
 #paste-box {
-    display: inline-block;
-    height: 200px;
-    width: 300px;
+  display: inline-block;
+  height: 200px;
+  width: 300px;
 }

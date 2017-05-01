@@ -26,15 +26,18 @@ if (isset($_POST["logout"])) {
 elseif (isset($_POST["register"])) {
   $username = $_POST["username"];
   $password = $_POST["password"];
-  if (strlen($username) > 33){
-    echo errorHTML("username must be less than 33 characters!");
+  if (strlen($username) > 32 || strlen($username) < 5){
+    echo errorHTML("Username must be between 5 and 32 characters!");
   }
-  elseif (strlen($password) > 33){
-    echo errorHTML("password must be less than 33 characters!");
+  elseif (strlen($password) > 32 || strlen($password) < 5){
+    echo errorHTML("Password must be between 5 and 32 characters!");
+  }
+  elseif ($password != $_POST["password2"]) {
+    echo errorHTML("The passwords do not match!");
   }
   elseif(checkregister($username)){
-    registerUser($username, $password);
-    echo sucessHTML("$username has registered.");
+    $uid = registerUser($username, $password);
+    echo successHTML("$username has registered.");
   }
   else {
     echo errorHTML("$username is taken. Please choose another username.");
@@ -45,7 +48,6 @@ elseif (isset($_POST["login"])) {
   if ($uid) {
     $_SESSION['uid'] = $uid;
     $_SESSION["username"] = $_POST["username"];
-    echo sucessHTML("Log in successful!");
   }
   else {
     echo errorHTML("Incorrect username and password.");
@@ -54,41 +56,43 @@ elseif (isset($_POST["login"])) {
 if (!$uid && isset($_SESSION['uid'])) {
   $uid = $_SESSION['uid'];
 }
-
-// Bind the paste event if the user is logged in
-if ($uid) {
-  echo "<script type='text/javascript'>bindPaste('$uid');</script>";
-  printf("<h2 style='color:#a83e7a'>%s is logged in!</h2>",
-    $_SESSION["username"]);
-} else {
-  echo "<h2 style='color:#a83e7a'> Please log in! </h2>";
-}
 ?>
 
 <?php if(!$uid) : ?>
   <body>
+  <h1>CopyPaste</h1>
   <div class="login-register-box">
     <form method='post'>
       <h2>
-        <span id='login' class='box-title'>Login</span>
+        <?php if(isset($_POST["register"])) : ?>
+          <div id='login' class='box-title'>Login</div> /
+          <div id='register' class='box-title selected-box'>Register</div>
+        <?php else : ?>
+          <div id='login' class='box-title selected-box'>Login</div> /
+          <div id='register' class='box-title'>Register</div>
+        <?php endif; ?>
       </h2>
       <table>
-      <tr><td>Username</td><td><input type='text' name='username'/></td></tr>
-      <tr><td>Password</td><td><input type='text' name='password'/></td></tr>
-      <tr class='verify-box'>
-        <td>Verify</td><td><input type='text' name='password2'/></td>
+      <tr>
+        <td>Username</td><td><input type='text' name='username' required/></td>
+      </tr>
+      <tr><td>Password</td><td><input type='password' name='password' required/></td></tr>
+      <tr id='verify' hidden>
+        <td>Verify</td><td><input type='password' name='password2'/></td>
       </tr>
       <tr>
         <td></td>
-        <td><input id='login-register-button' type='submit'
+        <td><input id='confirm-button' type='submit'
           name='login' value='Log In'/></td>
       </tr>
     </form>
   </div>
   </body>
 <?php else : ?>
+  <!-- Bind the paste event to the logged in user -->
+  <script type='text/javascript'>bindPaste('<?php echo $uid ?>');</script>
   <body ondrop="drop(event, '<?php echo $uid ?>')"
-    ondragover="allowDrop(event)">
+        ondragover="allowDrop(event)">
   <form method='post'>
     <input id='logout' type='submit' name='logout' value='logout' />
   </form>

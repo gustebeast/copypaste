@@ -87,13 +87,9 @@
       // This converts type identifiers like 'image/jpg' to '.jpg'
       $extension = '.'.substr($data['type'], strpos($data['type'], "/") + 1);
     }
-    // Generate a new "random" filename
-    $newFilename = uniqid() . $extension;
+    // Generate a new random and unique filename
+    $newFilename = uniqid(bin2hex(random_bytes(7))) . $extension;
     $path = PASTE_PATH . $newFilename;
-    // If the uniqid we generated wasn't unique (very rare), return an error
-    if (file_exists($path)) {
-      return errorHTML("An error occurred, please try again");
-    }
     // If text, write directly to file, otherwise move the uploaded image
     if ($type == "text") {
       file_put_contents($path, $data);

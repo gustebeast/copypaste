@@ -1,3 +1,8 @@
+$(document).ready(function() {
+  $('#login').click(function() {switchLoginRester('login');});
+  $('#register').click(function() {switchLoginRester('register');});
+});
+
 function bindPaste(uid) {
   $(document).bind(
     'paste',
@@ -26,8 +31,20 @@ function allowDrop(e) {
     e.preventDefault();
 }
 
-function login() {
-  //check login info in database
+function switchLoginRester(to) {
+  if (to == "login") {
+    $('#register').removeClass('selected-box');
+    $('#login').addClass('selected-box');
+    $('#verify').hide();
+    $('#confirm-button').attr('name', 'login').attr('value', 'Log In');
+    $('input[name="password2"]').attr('required', false);
+  } else {
+    $('#login').removeClass('selected-box');
+    $('#register').addClass('selected-box');
+    $('#verify').show();
+    $('#confirm-button').attr('name', 'register').attr('value', 'Register');
+    $('input[name="password2"]').attr('required', true);
+  }
 
 }
 
