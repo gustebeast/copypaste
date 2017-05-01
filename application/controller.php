@@ -7,7 +7,9 @@
   // // // // // // // // // // // // //
   function getPasteAsHTML($uid) {
     $path = PASTE_PATH . getPasteFilename($uid);
-    if (!file_exists($path)) {
+    if ($path == PASTE_PATH) {
+      return "<div class='help-text'>Paste anywhere to start</div>";
+    } elseif (!file_exists($path)) {
       return errorHTML("An error occurred!");
     } elseif (endsWith($path, ".txt")) {
       return getTextPasteHTML(file_get_contents($path));
@@ -64,6 +66,10 @@
 
   function errorHTML($text) {
     return "<div class='error'>$text</div>";
+  }
+
+  function successHTML($text) {
+    return "<div class='success'>$text</div>";
   }
 
   // // // // // // // // // // // // //
