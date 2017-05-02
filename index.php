@@ -17,7 +17,7 @@ setup_db();
 </head>
 
 <?php
-# Login/Register logic
+// Login/Register logic
 $uid = "";
 if (isset($_POST["logout"])) {
   $uid=false;
@@ -56,34 +56,39 @@ elseif (isset($_POST["login"])) {
 if (!$uid && isset($_SESSION['uid'])) {
   $uid = $_SESSION['uid'];
 }
+// If the user tried to register but failed,
+// make sure the registration box pops up
+if(isset($_POST["register"])) {
+  echo "<script type='text/javascript'>switchLoginRegister('register')</script>";
+}
 ?>
-
 <?php if(!$uid) : ?>
   <body>
   <h1>CopyPaste</h1>
   <div class="login-register-box">
     <form method='post'>
       <h2>
-        <?php if(isset($_POST["register"])) : ?>
-          <div id='login' class='box-title'>Login</div> /
-          <div id='register' class='box-title selected-box'>Register</div>
-        <?php else : ?>
-          <div id='login' class='box-title selected-box'>Login</div> /
-          <div id='register' class='box-title'>Register</div>
-        <?php endif; ?>
+        <div id='login' class='box-title selected-box'>Login</div> /
+        <div id='register' class='box-title'>Register</div>
       </h2>
       <table>
       <tr>
-        <td>Username</td><td><input type='text' name='username' required/></td>
+        <td>Username</td>
+        <td><input type='text' name='username' required/></td>
       </tr>
-      <tr><td>Password</td><td><input type='password' name='password' required/></td></tr>
+      <tr>
+        <td>Password</td>
+        <td><input type='password' name='password' required/></td>
+      </tr>
       <tr id='verify' hidden>
-        <td>Verify</td><td><input type='password' name='password2'/></td>
+        <td>Verify</td>
+        <td><input type='password' name='password2'/></td>
       </tr>
       <tr>
         <td></td>
-        <td><input id='confirm-button' type='submit'
-          name='login' value='Log In'/></td>
+        <td>
+          <input id='confirm-button' type='submit' name='login' value='Log In'/>
+        </td>
       </tr>
     </form>
   </div>
@@ -101,5 +106,10 @@ if (!$uid && isset($_SESSION['uid'])) {
     <?php echo getPasteAsHTML($uid); ?>
   </div>
   </body>
+<?php endif; ?>
+<!-- If the user tried to register but failed,
+     make sure the registration box pops up -->
+<?php if(isset($_POST["register"])) : ?>
+  <script type='text/javascript'>switchLoginRegister('register');</script>
 <?php endif; ?>
 </html>

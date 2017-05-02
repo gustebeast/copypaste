@@ -1,6 +1,6 @@
 $(document).ready(function() {
-  $('#login').click(function() { switchLoginRester('login'); });
-  $('#register').click(function() { switchLoginRester('register'); });
+  $('#login').click(function() { switchLoginRegister('login'); });
+  $('#register').click(function() { switchLoginRegister('register'); });
   $('textarea').select();
 });
 
@@ -32,7 +32,7 @@ function allowDrop(e) {
     e.preventDefault();
 }
 
-function switchLoginRester(to) {
+function switchLoginRegister(to) {
   if (to == "login") {
     $('#register').removeClass('selected-box');
     $('#login').addClass('selected-box');
