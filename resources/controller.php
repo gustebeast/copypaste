@@ -10,7 +10,7 @@
     if ($path == PASTE_PATH) {
       return "<div class='help-text'>Paste anywhere to start</div>";
     } elseif (!file_exists($path)) {
-      return errorHTML("An error occurred!");
+      return errorHTML("An error occurred! $path");
     } elseif (endsWith($path, ".txt")) {
       return getTextPasteHTML(file_get_contents($path));
     } else {
