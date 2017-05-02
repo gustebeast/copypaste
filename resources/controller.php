@@ -3,7 +3,6 @@
   if (!endsWith($dir, "resources")) {
     $dir .= '/' . "resources";
   }
-  error_log($dir);
   define("PASTE_PATH", $dir . '/');
   require_once "dbconn.php";
 
@@ -95,7 +94,6 @@
     // Generate a new random and unique filename
     $newFilename = uniqid(random(7)) . $extension;
     // Make sure the paste directory exists
-    error_log(PASTE_PATH);
     if (!file_exists(PASTE_PATH)) { mkdir(PASTE_PATH, 0744); }
     $path = PASTE_PATH . $newFilename;
     // If text, write directly to file, otherwise move the uploaded image
