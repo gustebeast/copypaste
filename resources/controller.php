@@ -1,9 +1,8 @@
 <?php
-  $addon = "";
-  if (!endsWith(getcwd(), "resources")) {
-    $addon = "resources/";
+  if (endsWith(getcwd(), "resources")) {
+    chdir("..");
   }
-  define("PASTE_PATH", $addon . "pastes/");
+  define("PASTE_PATH", "resources/pastes/");
   require_once "dbconn.php";
 
   // // // // // // // // // // // // //
@@ -58,9 +57,6 @@
   }
 
   function getImagePasteHTML($path) {
-    if (substr($path, 0, 6) == "pastes") {
-      $path = "resources/" . $path;
-    }
     return "<img id='pasted-image' src='$path'>";
   }
 
