@@ -1,4 +1,10 @@
 <?php
+  $dir = getcwd();
+  if (!endsWith($dir, "resources")) {
+    $dir .= '/' . "resources"
+  }
+  error_log($dir);
+  define("PASTE_PATH", $dir . '/');
   require_once "dbconn.php";
 
   // // // // // // // // // // // // //
