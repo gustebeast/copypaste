@@ -59,7 +59,7 @@
 
   function getImagePasteHTML($path) {
     if (substr($path, 0, 6) == "pastes") {
-      $path = "resources/" . $path
+      $path = "resources/" . $path;
     }
     return "<img id='pasted-image' src='$path'>";
   }
