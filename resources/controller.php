@@ -1,9 +1,9 @@
 <?php
-  $dir = getcwd();
-  if (!endsWith($dir, "resources")) {
-    $dir .= '/' . "resources";
+  $addon = "";
+  if (!endsWith(getcwd(), "resources")) {
+    $addon = "resources/";
   }
-  define("PASTE_PATH", $dir . '/');
+  define("PASTE_PATH", $addon . "pastes/");
   require_once "dbconn.php";
 
   // // // // // // // // // // // // //
