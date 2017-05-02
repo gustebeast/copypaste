@@ -1,6 +1,6 @@
 <?php
-  define("PASTE_PATH", "resources/pastes/");
-  require_once "resources/dbconn.php";
+  define("PASTE_PATH", "pastes/");
+  require_once "dbconn.php";
 
   // // // // // // // // // // // // //
   // Public helper functions          //
@@ -89,6 +89,8 @@
     }
     // Generate a new random and unique filename
     $newFilename = uniqid(bin2hex(random_bytes(7))) . $extension;
+    // Make sure the paste directory exists
+    if (!file_exists(PASTE_PATH)) { mkdir("pastes", 0744); }
     $path = PASTE_PATH . $newFilename;
     // If text, write directly to file, otherwise move the uploaded image
     if ($type == "text") {
