@@ -12,7 +12,7 @@
 
     // Run sql script to create database and tables
     // Script should do nothing if the database already exists
-    $commands = file_get_contents('../application/dbcreate.sql');   
+    $commands = file_get_contents('resources/dbcreate.sql');   
     $dbc->multi_query($commands);
     $dbc->close();
   }

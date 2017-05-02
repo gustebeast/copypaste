@@ -1,6 +1,6 @@
 <?php
-require "../application/dbconn.php";
-require "../application/controller.php";
+require "resources/dbconn.php";
+require "resources/controller.php";
 session_start();
 setup_db();
 //header("Cache-Control: max-age=0, must-revalidate, no-store");
@@ -9,10 +9,10 @@ setup_db();
 <html lang="en">
 <head>
 <!-- Load css and javascript -->
-<link href="../application/index.css" rel="stylesheet" type="text/css">
+<link href="resources/index.css" rel="stylesheet" type="text/css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js">
 </script>
-<script src="../application/index.js"></script>
+<script src="resources/index.js"></script>
 <title>CopyPaste</title>
 </head>
 

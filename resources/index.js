@@ -99,7 +99,7 @@ function paste(e, uid) {
 
 function makeRequest(formData) {
   $.ajax({
-      url: '../application/controller.php', 
+      url: 'resources/controller.php', 
       type: "POST", 
       cache: false,
       contentType: false,

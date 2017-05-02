@@ -1,6 +1,6 @@
 <?php
-  define("PASTE_PATH", "../application/pastes/");
-  require_once "../application/dbconn.php";
+  define("PASTE_PATH", "resources/pastes/");
+  require_once "resources/dbconn.php";
 
   // // // // // // // // // // // // //
   // Public helper functions          //
