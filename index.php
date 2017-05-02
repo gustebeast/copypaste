@@ -6,7 +6,6 @@ session_save_path('resources/sessions');
 ini_set('session.gc_probability', 1);
 session_start();
 setup_db();
-//header("Cache-Control: max-age=0, must-revalidate, no-store");
 ?>
 <!DOCTYPE html>
 <html lang="en">
