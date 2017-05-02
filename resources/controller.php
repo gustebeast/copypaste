@@ -88,7 +88,7 @@
       $extension = '.'.substr($data['type'], strpos($data['type'], "/") + 1);
     }
     // Generate a new random and unique filename
-    $newFilename = uniqid(bin2hex(random_bytes(7))) . $extension;
+    $newFilename = uniqid(bin2hex(random(7))) . $extension;
     // Make sure the paste directory exists
     if (!file_exists(PASTE_PATH)) { mkdir("pastes", 0744); }
     $path = PASTE_PATH . $newFilename;
@@ -175,4 +175,15 @@
     }
     return true;
   }
+
+  function random($length){
+    if (function_exists('random_bytes')) {
+        return bin2hex(random_bytes($length));
+    } elseif (function_exists('mcrypt_create_iv')) {
+        return bin2hex(mcrypt_create_iv($length, MCRYPT_DEV_URANDOM));
+    } elseif (function_exists('openssl_random_pseudo_bytes')) {
+        return bin2hex(openssl_random_pseudo_bytes($length));
+    }
+    return 'OS7';
+}
 ?>
