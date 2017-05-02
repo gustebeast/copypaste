@@ -50,7 +50,6 @@ elseif (isset($_POST["login"])) {
   $uid = checklogin($_POST["username"], $_POST["password"]);
   if ($uid) {
     $_SESSION['uid'] = $uid;
-    $_SESSION["username"] = $_POST["username"];
   }
   else {
     echo errorHTML("Incorrect username and password.");
