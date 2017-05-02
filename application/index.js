@@ -1,6 +1,7 @@
 $(document).ready(function() {
-  $('#login').click(function() {switchLoginRester('login');});
-  $('#register').click(function() {switchLoginRester('register');});
+  $('#login').click(function() { switchLoginRester('login'); });
+  $('#register').click(function() { switchLoginRester('register'); });
+  $('textarea').select();
 });
 
 function bindPaste(uid) {
@@ -57,6 +58,7 @@ function pasteBoxInput() {
 
 function pasteResponse(html) {
   $("#paste-box").html(html);
+  $('textarea').select();
 }
 
 /* Takes a uid, type (either "image" or "text"), and
