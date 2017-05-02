@@ -1,5 +1,5 @@
 <?php
-  define("PASTE_PATH", getcwd() . "/resources/pastes/");
+  define("PASTE_PATH", "pastes/");
   require_once "dbconn.php";
 
   // // // // // // // // // // // // //
