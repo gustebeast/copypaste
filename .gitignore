@@ -1,2 +1,3 @@
 .DS_Store
-application/pastes/*
+resources/pastes/*
+resources/sessions/*

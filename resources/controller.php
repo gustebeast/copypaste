@@ -88,7 +88,7 @@
       $extension = '.'.substr($data['type'], strpos($data['type'], "/") + 1);
     }
     // Generate a new random and unique filename
-    $newFilename = uniqid(bin2hex(random(7))) . $extension;
+    $newFilename = uniqid(random(7)) . $extension;
     // Make sure the paste directory exists
     if (!file_exists(PASTE_PATH)) { mkdir("pastes", 0744); }
     $path = PASTE_PATH . $newFilename;
