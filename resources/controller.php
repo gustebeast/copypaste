@@ -1,5 +1,4 @@
 <?php
-  define("PASTE_PATH", realpath("pastes") . '/');
   require_once "dbconn.php";
 
   // // // // // // // // // // // // //

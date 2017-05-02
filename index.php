@@ -1,6 +1,7 @@
 <?php
 require "resources/dbconn.php";
 require "resources/controller.php";
+define("PASTE_PATH", realpath("resources/pastes") . '/');
 if (!file_exists("resources/sessions")) { mkdir("resources/sessions", 0744); }
 session_save_path('resources/sessions');
 ini_set('session.gc_probability', 1);
